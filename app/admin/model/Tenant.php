@@ -191,10 +191,26 @@ class Tenant extends BaseModel
         }
 
         try {
-            $sql = "CREATE DATABASE IF NOT EXISTS `{$this->db_name}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-            \think\facade\Db::execute($sql);
+            // 使用mysql连接执行创建数据库命令（不能使用当前连接）
+            $charset = config('tenant.database_charset', 'utf8mb4');
+            $collation = config('tenant.database_collation', 'utf8mb4_unicode_ci');
+
+            $sql = "CREATE DATABASE IF NOT EXISTS `{$this->db_name}` DEFAULT CHARACTER SET {$charset} COLLATE {$collation}";
+
+            // 使用mysql连接执行
+            \think\facade\Db::connect('mysql')->execute($sql);
+
+            \think\facade\Log::info('Tenant database created', [
+                'tenant_code' => $this->tenant_code,
+                'database' => $this->db_name
+            ]);
+
             return true;
         } catch (\Exception $e) {
+            \think\facade\Log::error('Failed to create tenant database: ' . $e->getMessage(), [
+                'tenant_code' => $this->tenant_code,
+                'database' => $this->db_name
+            ]);
             return false;
         }
     }
