@@ -192,8 +192,8 @@ class Tenant extends BaseModel
 
         try {
             // 使用mysql连接执行创建数据库命令（不能使用当前连接）
-            $charset = config('tenant.database_charset', 'utf8mb4');
-            $collation = config('tenant.database_collation', 'utf8mb4_unicode_ci');
+            $charset = \think\facade\Config::get('tenant.database_charset', 'utf8mb4');
+            $collation = \think\facade\Config::get('tenant.database_collation', 'utf8mb4_unicode_ci');
 
             $sql = "CREATE DATABASE IF NOT EXISTS `{$this->db_name}` DEFAULT CHARACTER SET {$charset} COLLATE {$collation}";
 

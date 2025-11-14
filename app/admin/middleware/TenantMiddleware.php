@@ -174,14 +174,24 @@ class TenantMiddleware
         try {
             // 移除Bearer前缀
             $token = str_replace('Bearer ', '', $token);
+            $token = trim($token);
 
-            // TODO: 实现JWT解析逻辑
-            // 这里需要根据实际的JWT实现来解析
-            // $payload = JWT::decode($token);
-            // return $payload->tenant_code ?? null;
+            if (empty($token)) {
+                return null;
+            }
 
-            return null;
+            // 使用JwtHelper解析Token
+            $payload = \extend\auth\JwtHelper::decode($token);
+
+            if ($payload === false) {
+                return null;
+            }
+
+            // 从payload中获取tenant_code
+            return $payload['tenant_code'] ?? null;
+
         } catch (\Exception $e) {
+            Log::error('Resolve tenant from token failed: ' . $e->getMessage());
             return null;
         }
     }
@@ -300,9 +310,12 @@ class TenantMiddleware
             $connection = Db::connect('tenant');
             $connection->query('SELECT 1');
 
-            // 设置默认连接为租户连接
-            // 注意：这会影响后续所有数据库操作
-            // Db::setDefaultConnection('tenant');  // TP8中可能不需要这样设置
+            // 设置默认连接为租户连接 - 关键修复
+            // ThinkPHP 8.x 必须将租户连接设置为默认连接
+            // 否则后续所有Db操作仍使用原连接，导致数据隔离失败
+            Db::setConfig([
+                'default' => 'tenant'
+            ]);
 
         } catch (\Exception $e) {
             // 数据库连接失败

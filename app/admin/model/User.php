@@ -166,14 +166,20 @@ class User extends BaseModel
 
     /**
      * 更新登录信息
-     * @param string $ip
+     * @param string $ip 登录IP
+     * @param string $userAgent 用户代理
      * @return bool
      */
-    public function updateLoginInfo($ip)
+    public function updateLoginInfo($ip, $userAgent = '')
     {
         $this->login_ip = $ip;
         $this->login_time = date('Y-m-d H:i:s');
         $this->login_count += 1;
+
+        // 如果提供了user_agent，也更新
+        if (!empty($userAgent)) {
+            $this->user_agent = $userAgent;
+        }
 
         return $this->save();
     }

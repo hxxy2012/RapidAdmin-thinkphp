@@ -192,9 +192,10 @@ class BaseModel extends Model
 
         if (!isset($fields[$table])) {
             try {
-                // 使用查询构建器获取字段
-                $fields[$table] = $this->db()->getFields();
-                $fields[$table] = array_keys($fields[$table]);
+                // ThinkPHP 8.x 正确的获取字段方法
+                // 使用Db facade的getTableFields方法
+                $tableFields = \think\facade\Db::getTableFields($table);
+                $fields[$table] = $tableFields ?: [];
             } catch (\Exception $e) {
                 // 如果获取失败，返回空数组
                 $fields[$table] = [];
