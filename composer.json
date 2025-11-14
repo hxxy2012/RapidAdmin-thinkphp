@@ -1,0 +1,55 @@
+{
+    "name": "enterpriseplus/saas-platform",
+    "description": "企业级SaaS开发平台 - EnterprisePlus",
+    "type": "project",
+    "keywords": [
+        "thinkphp",
+        "saas",
+        "multi-tenant",
+        "workflow",
+        "enterprise"
+    ],
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.0",
+        "topthink/framework": "^8.0",
+        "topthink/think-orm": "^3.0",
+        "topthink/think-queue": "^3.0",
+        "topthink/think-captcha": "^3.0",
+        "topthink/think-multi-app": "^1.0",
+
+        "phpoffice/phpspreadsheet": "^1.29",
+        "phpmailer/phpmailer": "^6.8",
+        "firebase/php-jwt": "^6.8",
+        "guzzlehttp/guzzle": "^7.8",
+        "intervention/image": "^2.7",
+
+        "mtdowling/cron-expression": "^1.2",
+        "predis/predis": "^2.2",
+        "doctrine/dbal": "^3.7",
+        "symfony/process": "^6.3"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.3",
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        },
+        "psr-0": {
+            "": "extend/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php think service:discover",
+            "@php think vendor:publish"
+        ]
+    }
+}
