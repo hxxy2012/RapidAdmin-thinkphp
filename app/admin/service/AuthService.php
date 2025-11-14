@@ -282,9 +282,14 @@ class AuthService
      */
     protected function getUserPermissions(User $user): array
     {
-        // TODO: 从角色获取权限列表
-        // 这里先返回空数组，在Phase 2中实现完整的权限逻辑
-        return [];
+        // 使用Auth类获取用户权限列表
+        try {
+            $auth = new \extend\auth\Auth($user->id, $user->tenant_id);
+            return $auth->getPermissions();
+        } catch (\Exception $e) {
+            Log::error('Get user permissions failed: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -295,9 +300,14 @@ class AuthService
      */
     protected function getUserMenus(User $user): array
     {
-        // TODO: 从角色获取菜单树
-        // 这里先返回空数组，在Phase 2中实现完整的菜单逻辑
-        return [];
+        // 使用Auth类获取用户菜单树
+        try {
+            $auth = new \extend\auth\Auth($user->id, $user->tenant_id);
+            return $auth->getMenuTree();
+        } catch (\Exception $e) {
+            Log::error('Get user menus failed: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
